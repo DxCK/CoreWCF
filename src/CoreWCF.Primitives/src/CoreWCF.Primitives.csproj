@@ -13,6 +13,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="2.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Server.Abstractions" Version="2.1.1" />
+    <!-- See rationale in comment https://github.com/CoreWCF/CoreWCF/issues/1171#issuecomment-1675183317 -->
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.34" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.23" />
@@ -23,7 +25,7 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens.Saml" Version="6.23.1" />
     <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="2.1.6" />
     <PackageReference Include="System.DirectoryServices" Version="6.0.1" />
-    <PackageReference Include="System.DirectoryServices.Protocols" Version="6.0.1" />
+    <PackageReference Include="System.DirectoryServices.Protocols" Version="6.0.2" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="6.0.0" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.1" />
     <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />

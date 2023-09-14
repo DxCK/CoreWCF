@@ -1,3 +1,6 @@
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
 using System;
 using System.Xml;
 
@@ -5,8 +8,8 @@ namespace Helpers
 {
     internal class ArrayDataContract : DataContract
     {
-        DataContract itemContract;
-        int rank;
+        private DataContract itemContract;
+        private int rank;
 
         internal ArrayDataContract() : base()
         {

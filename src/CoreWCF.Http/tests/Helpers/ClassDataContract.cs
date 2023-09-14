@@ -1,3 +1,6 @@
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -8,8 +11,8 @@ namespace Helpers
 {
     internal class ClassDataContract : DataContract
     {
-        ClassDataContract baseContract;
-        List<DataMember> members;
+        private ClassDataContract baseContract;
+        private List<DataMember> members;
 
         internal ClassDataContract()
         {
@@ -52,7 +55,7 @@ namespace Helpers
             ImportDataMembers(type, hasDataContract);
         }
 
-        void ImportDataMembers(Type type, bool hasDataContract)
+        private void ImportDataMembers(Type type, bool hasDataContract)
         {
             members = new List<DataMember>();
             MemberInfo[] memberInfos = type.GetMembers(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
@@ -114,7 +117,7 @@ namespace Helpers
             members.Sort(DataMemberComparer.Singleton);
         }
 
-        static bool IsMethodOverriding(MethodInfo method)
+        private static bool IsMethodOverriding(MethodInfo method)
         {
             return method.IsVirtual && ((method.Attributes & MethodAttributes.NewSlot) == 0);
         }

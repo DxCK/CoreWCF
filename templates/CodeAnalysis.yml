@@ -17,7 +17,7 @@ stages:
     steps:
     - bash: |
         echo 'Starting docker services...'
-        docker-compose up -d
+        docker compose up -d awaiter
       name: DockerComposeLinuxServices
       displayName: Start services hosted by linux containers
       timeoutInMinutes: 5
@@ -34,6 +34,8 @@ stages:
       displayName: Restore packages
       inputs:
         command: restore
+        feedsToUse: config
+        nugetConfigPath: src/NuGet.config
         projects: src/CoreWCF.sln
 
     - task: SonarCloudPrepare@1
@@ -58,7 +60,7 @@ stages:
 
     - task: DotNetCoreCLI@2
       displayName: Run tests with Coverage
-      timeoutInMinutes: 12
+      timeoutInMinutes: 20
       inputs:
         command: test
         projects: ${{ parameters.testProjects}}
@@ -79,10 +81,9 @@ stages:
       inputs:
         pollingTimeoutSec: '300'
       condition: not(eq(variables['build.reason'], 'PullRequest'))
-      
     - bash: |
         echo 'Cleaning up docker services...'
-        docker-compose down --rmi all
+        docker compose down --rmi all
       name: DockerComposeDownLinuxServices
       displayName: Clean up containers used to host services
       timeoutInMinutes: 5

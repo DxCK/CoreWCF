@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
@@ -14,12 +14,16 @@ using Microsoft.Extensions.Hosting;
 
 namespace CoreWCF.Queue.Common
 {
-    internal class QueuePollingService : IHostedService, IDisposable
+    internal class QueuePollingService : IHostedService, IDisposable, IAsyncDisposable
     {
         private readonly QueueMiddleware _queueMiddleware;
         private readonly IServiceProvider _services;
         private readonly List<QueueTransportContext> _queueTransportContexts;
         private readonly IServiceBuilder _serviceBuilder;
+        private bool _stopped;
+        private bool _initialized;
+        private bool _startCalled;
+
         public QueuePollingService(IServiceProvider services, QueueMiddleware queueMiddleware)
         {
             _services = services;
@@ -31,12 +35,24 @@ namespace CoreWCF.Queue.Common
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            var tasks = _queueTransportContexts.Select(queueTransport => StartFetchingMessage(queueTransport, cancellationToken));
-            await Task.WhenAll(tasks);
+            _startCalled = true;
+            if (_initialized)
+            {
+                var tasks = _queueTransportContexts.Select(queueTransport =>
+                    queueTransport.QueuePump.StartPumpAsync(queueTransport, cancellationToken));
+                await Task.WhenAll(tasks);
+            }
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
+            if (_stopped)
+            {
+                return Task.CompletedTask;
+            }
+
+            _stopped = true;
+
             var tasks = _queueTransportContexts.Select(queueTransport =>
                 queueTransport.QueuePump.StopPumpAsync(cancellationToken));
             return Task.WhenAll(tasks);
@@ -45,6 +61,11 @@ namespace CoreWCF.Queue.Common
         private void _serviceBuilder_Opened(object sender, EventArgs e)
         {
             Init();
+            _initialized = true;
+            if (_startCalled)
+            {
+                StartAsync(default).GetAwaiter().GetResult();
+            }
         }
 
         private void Init()
@@ -95,20 +116,28 @@ namespace CoreWCF.Queue.Common
             }
         }
 
-        private static async Task StartFetchingMessage(QueueTransportContext queueTransport, CancellationToken token)
+        public async ValueTask DisposeAsync()
         {
-            await queueTransport.QueuePump.StartPumpAsync(queueTransport, token);
+            await StopAsync(default);
+
+            foreach (var queueTransportContext in _queueTransportContexts)
+            {
+                if (queueTransportContext.QueuePump is IAsyncDisposable disposable)
+                {
+                    await disposable.DisposeAsync();
+                    continue;
+                }
+
+                if (queueTransportContext.QueuePump is IDisposable syncDisposable)
+                {
+                    syncDisposable.Dispose();
+                }
+            }
         }
 
         public void Dispose()
         {
-            foreach (var queueTransportContext in _queueTransportContexts)
-            {
-                if (queueTransportContext.QueuePump is IDisposable disposable)
-                {
-                    disposable.Dispose();
-                }
-            }
+            DisposeAsync().AsTask().GetAwaiter().GetResult();
         }
     }
 }

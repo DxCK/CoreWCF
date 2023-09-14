@@ -28,6 +28,17 @@ public class WindowsOnlyFactAttribute : FactAttribute
     }
 }
 
+public class LinuxOnlyFactAttribute : FactAttribute
+{
+    public LinuxOnlyFactAttribute()
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            Skip = nameof(LinuxOnlyFactAttribute);
+        }
+    }
+}
+
 public class WindowsOnlyTheoryAttribute : TheoryAttribute
 {
     public WindowsOnlyTheoryAttribute()
@@ -54,6 +65,20 @@ public class WindowsNetCoreOnlyFactAttribute : FactAttribute
 public class LinuxWhenCIOnlyFactAttribute : FactAttribute
 {
     public LinuxWhenCIOnlyFactAttribute()
+    {
+        if (Environment.GetEnvironmentVariable("CI") == "true")
+        {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                Skip = nameof(LinuxWhenCIOnlyFactAttribute);
+            }
+        }
+    }
+}
+
+public class LinuxWhenCIOnlyTheoryAttribute : TheoryAttribute
+{
+    public LinuxWhenCIOnlyTheoryAttribute()
     {
         if (Environment.GetEnvironmentVariable("CI") == "true")
         {

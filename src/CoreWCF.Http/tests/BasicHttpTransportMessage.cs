@@ -11,7 +11,6 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
-using System.Threading;
 using System.Threading.Tasks;
 using CoreWCF;
 using CoreWCF.Configuration;
@@ -65,10 +64,7 @@ namespace BasicHttp
                 ((IChannel)channel).Open();
                 string result = channel.EchoString(testString);
                 Assert.Equal(testString, result);
-                Thread.Sleep(5000);
-
                 ((IChannel)channel).Close();
-                Console.WriteLine("read ");
             }
         }
 
@@ -154,7 +150,6 @@ namespace BasicHttp
                 string result = channel.EchoString(testString);
                 Assert.Equal(testString, result);
                 ((IChannel)channel).Close();
-                Console.WriteLine("read ");
             }
         }
 
@@ -181,7 +176,7 @@ namespace BasicHttp
                 ClientContract.IEchoService channel = factory.CreateChannel();
                 ((IChannel)channel).Open();
                 string result = channel.EchoString(testString);
-                Assert.Equal(testString, result);                
+                Assert.Equal(testString, result);
                 ((IChannel)channel).Close();
                 factory.Close();
             }

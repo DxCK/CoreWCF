@@ -7,7 +7,6 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
-using System.Threading;
 using System.Threading.Tasks;
 using CoreWCF;
 using CoreWCF.Configuration;
@@ -75,12 +74,11 @@ namespace WSHttp
                 ((IChannel)channel).Open();
                 string result = channel.EchoString(testString);
                 Assert.Equal(testString, result);
-                Console.WriteLine("read ");
                 ((IChannel)channel).Close();
             }
         }
 
-        [Fact , Description("Demuxer-failure")]
+        [Fact, Description("Demuxer-failure")]
         public void WSHttpRequestReplyWithTransportMessageEchoStringDemuxFailure()
         {
             string testString = new string('a', 3000);
@@ -101,12 +99,11 @@ namespace WSHttp
                 };
                 ClientContract.IEchoService channel = factory.CreateChannel();
                 ((IChannel)channel).Open();
-                Thread.Sleep(6000);
                 try
                 {
                     channel.EchoString(testString);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Assert.True(typeof(System.ServiceModel.FaultException).Equals(ex.InnerException.GetType()));
                     Assert.Contains("expired security context token", ex.InnerException.Message);
@@ -114,10 +111,9 @@ namespace WSHttp
             }
         }
 
-        [Fact , Description("user-validation-failure")]
+        [Fact, Description("user-validation-failure")]
         public void WSHttpRequestReplyWithTransportMessageEchoStringUserValidationFailure()
         {
-            string testString = new string('a', 3000);
             IWebHost host = ServiceHelper.CreateHttpsWebHostBuilder<WSHttpTransportWithMessageCredentialWithUserNameExpire>(_output).Build();
             using (host)
             {
@@ -138,7 +134,7 @@ namespace WSHttp
                 {
                     ((IChannel)channel).Open();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Assert.True(typeof(System.ServiceModel.FaultException).Equals(ex.InnerException.GetType()));
                     Assert.Contains("An error occurred when verifying security for the message.", ex.InnerException.Message);
@@ -169,10 +165,7 @@ namespace WSHttp
                 ((IChannel)channel).Open();
                 string result = channel.EchoString(testString);
                 Assert.Equal(testString, result);
-                Thread.Sleep(5000);
-
                 ((IChannel)channel).Close();
-                Console.WriteLine("read ");
             }
         }
 
@@ -199,7 +192,6 @@ namespace WSHttp
                 string result = channel.EchoString(testString);
                 Assert.Equal(testString, result);
                 ((IChannel)channel).Close();
-                Console.WriteLine("read ");
             }
         }
 
@@ -360,10 +352,10 @@ namespace WSHttp
         {
             public override CoreWCF.Channels.Binding ChangeBinding(WSHttpBinding binding)
             {
-               CoreWCF.Channels.CustomBinding customBinding = new CoreWCF.Channels.CustomBinding(binding);
-               CoreWCF.Channels.SecurityBindingElement security = customBinding.Elements.Find<CoreWCF.Channels.SecurityBindingElement>();
-               security.LocalServiceSettings.InactivityTimeout = TimeSpan.FromSeconds(3);
-               return customBinding;
+                CoreWCF.Channels.CustomBinding customBinding = new CoreWCF.Channels.CustomBinding(binding);
+                CoreWCF.Channels.SecurityBindingElement security = customBinding.Elements.Find<CoreWCF.Channels.SecurityBindingElement>();
+                security.LocalServiceSettings.InactivityTimeout = TimeSpan.FromSeconds(3);
+                return customBinding;
             }
         }
 

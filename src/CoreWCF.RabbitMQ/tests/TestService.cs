@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Threading;
 using CoreWCF;
 
@@ -14,10 +13,10 @@ namespace Contracts
         [System.ServiceModel.OperationContract(IsOneWay = true)]
         [OperationContract(IsOneWay = true)]
         void Create(string name);
-    }   
+    }
 
     public class TestService : ITestContract
-    {  
+    {
         public TestService()
         {
             ManualResetEvent = new ManualResetEventSlim(false);
@@ -25,7 +24,6 @@ namespace Contracts
 
         public void Create(string name)
         {
-            Console.WriteLine(name);
             ManualResetEvent.Set();
         }
         public ManualResetEventSlim ManualResetEvent { get; }

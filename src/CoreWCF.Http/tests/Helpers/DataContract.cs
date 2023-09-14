@@ -1,3 +1,6 @@
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -7,10 +10,10 @@ namespace Helpers
 {
     internal class DataContract
     {
-        static Dictionary<Type, DataContract> cache = new Dictionary<Type, DataContract>();
-        Type underlyingType;
-        bool isValueType;
-        XmlQualifiedName stableName;
+        private static Dictionary<Type, DataContract> cache = new Dictionary<Type, DataContract>();
+        private Type underlyingType;
+        private bool isValueType;
+        private XmlQualifiedName stableName;
 
         internal static DataContract GetDataContract(Type type)
         {
@@ -31,7 +34,7 @@ namespace Helpers
             return dataContract;
         }
 
-        static DataContract CreateDataContract(Type type)
+        private static DataContract CreateDataContract(Type type)
         {
             DataContract primitiveContract = PrimitiveDataContract.GetPrimitiveDataContract(type);
 

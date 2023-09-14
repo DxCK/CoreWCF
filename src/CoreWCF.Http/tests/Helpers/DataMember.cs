@@ -1,3 +1,6 @@
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
 using System;
 using System.Reflection;
 
@@ -5,10 +8,10 @@ namespace Helpers
 {
     internal class DataMember
     {
-        DataContract memberTypeContract;
-        string name;
-        int versionAdded;
-        MemberInfo memberInfo;
+        private DataContract memberTypeContract;
+        private string name;
+        private int versionAdded;
+        private MemberInfo memberInfo;
 
         internal DataMember()
         {
